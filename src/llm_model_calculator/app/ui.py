@@ -1,14 +1,12 @@
 # Python module
 import streamlit as st
 import re  # To help parse the number of tokens from the query
+import json
 
-# Sample data for Jurassic-2 Ultra
-pricing_data = {
-    "Jurassic-2 Ultra": {
-        "input_tokens": 0.0188,
-        "output_tokens": 0.0188
-    }
-}
+# Load updated pricing data from JSON file
+file_path = "C:\\Users\\MaanPatel\\OneDrive - CloudThat\\projects\\llm_cal_project\\src\\llm_model_calculator\\data\\latest_prices.json"
+with open("C:\\Users\\MaanPatel\\OneDrive - CloudThat\\projects\\llm_cal_project\\src\\llm_model_calculator\\data\\latest_prices.json", "r") as file:
+    pricing_data = json.load(file)
 
 # Set page configuration
 st.set_page_config(page_title="LLM Cost Estimator Chatbot", layout="centered")
@@ -23,32 +21,36 @@ if "chat_history" not in st.session_state:
 # Input box for user query
 user_query = st.text_input("💬 Ask me about LLM pricing (e.g., 'How much does it cost for 100 input tokens for Jurassic-2 Ultra?')")
 
-def calculate_cost(query, model_name):
-    # Extract token amount from the query (either "100 input tokens" or "1000 input tokens")
+def calculate_cost(query):
+    # Match tokens and type
     match = re.search(r"(\d+)\s*(input|output)\s*tokens", query, re.IGNORECASE)
-    
-    if match:
-        token_count = int(match.group(1))
-        token_type = match.group(2).lower()
+    if not match:
+        return "❓ Sorry, I couldn't extract token info from your query."
 
-        # Retrieve pricing data for the model
-        if model_name in pricing_data:
-            price_per_1000_tokens = pricing_data[model_name]["input_tokens"] if token_type == "input" else pricing_data[model_name]["output_tokens"]
-            cost = (token_count / 1000) * price_per_1000_tokens
-            return f"The cost for {token_count} {token_type} tokens for {model_name} is: ${cost:.4f}"
+    token_count = int(match.group(1))
+    token_type = match.group(2).lower()
 
-    return "❓ Sorry, I couldn't process your query correctly."
+    # Check for model names in the query
+    for model_name in pricing_data:
+        if model_name.lower() in query.lower():
+            price_key = "input_price" if token_type == "input" else "output_price"
+            price = pricing_data[model_name].get(price_key)
+
+            if price is not None:
+                cost = (token_count / 1000) * price
+                return f"The cost for {token_count} {token_type} tokens for **{model_name}** is: **${cost:.4f}**"
+            else:
+                return f"⚠️ Pricing for {token_type} tokens for {model_name} is not available."
+
+    return "❓ Sorry, I couldn't find any model name in your query."
 
 # If user submits a query
 if user_query:
     # Add user message to chat history
     st.session_state.chat_history.append(("user", user_query))
 
-    # Check if the query contains model name and the type of tokens
-    if "Jurassic-2 Ultra" in user_query:
-        bot_reply = calculate_cost(user_query, "Jurassic-2 Ultra")
-    else:
-        bot_reply = "❓ Sorry, I couldn't find any pricing info related to your query."
+    # Get bot reply
+    bot_reply = calculate_cost(user_query)
 
     # Add bot reply to chat history
     st.session_state.chat_history.append(("bot", bot_reply))

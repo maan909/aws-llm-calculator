@@ -49,7 +49,7 @@ for filepath in list_of_files:
             if filepath.suffix == ".py":
                 f.write("# Python module\n")
             elif filepath.name == "latest_prices.json":
-                f.write("{}")  # Start with an empty JSON object
+                f.write("{}") 
             logging.info(f"Creating empty file: {filepath}")
     else:
         logging.info(f"File already exists: {filepath}")
