@@ -16,7 +16,7 @@ import logging
 logging.basicConfig(level=logging.INFO)
 
 URL = "https://aws.amazon.com/bedrock/pricing/"
-OUTPUT_PATH = Path("src/llm_model_calculator/data/latest_prices.json")
+OUTPUT_PATH = Path("C:\\Users\\MaanPatel\\OneDrive - CloudThat\\projects\\llm_cal_project\\src\\llm_model_calculator\\data\\latest_prices.json")
 
 def setup_driver():
     options = Options()
