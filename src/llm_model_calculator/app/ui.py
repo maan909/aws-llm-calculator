@@ -5,7 +5,7 @@ import json
 
 # Load updated pricing data from JSON file
 file_path = "C:\\Users\\MaanPatel\\OneDrive - CloudThat\\projects\\llm_cal_project\\src\\llm_model_calculator\\data\\latest_prices.json"
-with open("C:\\Users\\MaanPatel\\OneDrive - CloudThat\\projects\\llm_cal_project\\src\\llm_model_calculator\\data\\latest_prices.json", "r") as file:
+with open(file_path, "r") as file:
     pricing_data = json.load(file)
 
 # Set page configuration

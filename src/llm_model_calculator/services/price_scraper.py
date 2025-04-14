@@ -28,17 +28,17 @@ def setup_driver():
 
 def scrape_bedrock_dynamic():
     driver = setup_driver()
-    logging.info("Loading AWS Bedrock pricing page...")
+    logging.info("🔄 Loading AWS Bedrock pricing page...")
     driver.get(URL)
 
     try:
         WebDriverWait(driver, 15).until(
             EC.presence_of_element_located((By.CSS_SELECTOR, "table"))
         )
-        logging.info("Pricing table detected!")
+        logging.info("✅ Pricing table detected!")
 
     except Exception as e:
-        logging.error("Timeout waiting for table. DOM structure might have changed.")
+        logging.error("⏱️ Timeout waiting for table. DOM structure might have changed.")
         driver.quit()
         return {}
 
@@ -46,45 +46,47 @@ def scrape_bedrock_dynamic():
     driver.quit()
 
     soup = BeautifulSoup(page_source, "html.parser")
-
-    # Optional: Save to debug HTML file
-    with open("debug_bedrock_pricing.html", "w", encoding="utf-8") as f:
-        f.write(page_source)
-
     pricing_data = {}
 
     tables = soup.find_all("table")
     for table in tables:
         rows = table.find_all("tr")
 
-        # Skip if no data rows
         if len(rows) < 2:
             continue
 
-        # Ensure the first row is valid before accessing
-        first_row_cols = rows[0].find_all("td")
-        if len(first_row_cols) < 2:
-            continue  # Skip table if the first row isn't valid
+        headers = [td.get_text(strip=True).lower() for td in rows[0].find_all("td")]
+    
+        if not headers:
+            continue  # 👈 Safely skip this table if no headers were found
 
-        headers = [td.get_text(strip=True).lower() for td in first_row_cols]
-        
-        # Checking if it contains the expected headers
-        if "price per 1,000 input tokens" not in headers[1]:
-            continue
+        if "anthropic models" in headers[0]:
+            for row in rows[1:]:
+                cols = row.find_all("td")
+                if len(cols) != 7:
+                    continue
+                model = cols[0].get_text(strip=True).replace("\n", " ").replace("  ", " ")
+                pricing_data[model] = {
+                "input_price": extract_price(cols[1].get_text(strip=True)),
+                "output_price": extract_price(cols[2].get_text(strip=True)),
+                "batch_input_price": extract_price(cols[3].get_text(strip=True)),
+                "batch_output_price": extract_price(cols[4].get_text(strip=True)),
+                "cache_write_price": extract_price(cols[5].get_text(strip=True)),
+                "cache_read_price": extract_price(cols[6].get_text(strip=True)),
+                "unit": "per 1K tokens",
+                "provider": "Anthropic",
+                "region": "us-east-1 / us-west-2"
+             }
 
-        # Parse actual rows, starting from the second row
-        for row in rows[1:]:
-            cols = row.find_all("td")
-            if len(cols) != 3:
-                continue
-
-            model = cols[0].get_text(strip=True)
-            input_price = extract_price(cols[1].get_text(strip=True))
-            output_price = extract_price(cols[2].get_text(strip=True))
-
-            pricing_data[model] = {
-                "input_price": input_price,
-                "output_price": output_price,
+        elif len(headers) >= 2 and "price per 1,000 input tokens" in headers[1]:
+            for row in rows[1:]:
+                cols = row.find_all("td")
+                if len(cols) != 3:
+                    continue
+                model = cols[0].get_text(strip=True)
+                pricing_data[model] = {
+                "input_price": extract_price(cols[1].get_text(strip=True)),
+                "output_price": extract_price(cols[2].get_text(strip=True)),
                 "unit": "per 1K tokens",
                 "provider": "AI21 Labs",
                 "region": "us-east-1"
@@ -93,7 +95,7 @@ def scrape_bedrock_dynamic():
     if not pricing_data:
         logging.warning("⚠️ Still no data. Check DOM structure again or manual scraping.")
     else:
-        logging.info(f"Extracted {len(pricing_data)} models from pricing table.")
+        logging.info(f"✅ Extracted {len(pricing_data)} models from pricing table.")
 
     return pricing_data
 

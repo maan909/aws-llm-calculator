@@ -34,33 +34,27 @@
         "provider": "AI21 Labs",
         "region": "us-east-1"
     },
-    "*Claude 3 Opus is currently available in the US West (Oregon) Region": {
-        "input_price": null,
-        "output_price": null,
+    "Claude 3.7 Sonnet***": {
+        "input_price": 0.003,
+        "output_price": 0.015,
+        "batch_input_price": null,
+        "batch_output_price": null,
+        "cache_write_price": 0.00375,
+        "cache_read_price": 0.0003,
         "unit": "per 1K tokens",
-        "provider": "AI21 Labs",
-        "region": "us-east-1"
+        "provider": "Anthropic",
+        "region": "us-east-1 / us-west-2"
     },
-    "**Pricing for Claude 3.5 Sonnet is applicable to each version of Claude 3.5 Sonnet (v1 and v2) - Claude 3.5 Sonnet v2 is currently available in the US West (Oregon) Region": {
-        "input_price": null,
-        "output_price": null,
+    "Claude 3.5 Sonnet**": {
+        "input_price": 0.003,
+        "output_price": 0.015,
+        "batch_input_price": 0.0015,
+        "batch_output_price": 0.0075,
+        "cache_write_price": 0.00375,
+        "cache_read_price": 0.0003,
         "unit": "per 1K tokens",
-        "provider": "AI21 Labs",
-        "region": "us-east-1"
-    },
-    "Claude 3.5 Sonnet": {
-        "input_price": 0.0036,
-        "output_price": 0.018,
-        "unit": "per 1K tokens",
-        "provider": "AI21 Labs",
-        "region": "us-east-1"
-    },
-    "Claude 3 Haiku": {
-        "input_price": 0.0003,
-        "output_price": 0.0015,
-        "unit": "per 1K tokens",
-        "provider": "AI21 Labs",
-        "region": "us-east-1"
+        "provider": "Anthropic",
+        "region": "us-east-1 / us-west-2"
     },
     "Claude 3.5 Haiku": {
         "input_price": 0.001,
@@ -68,6 +62,83 @@
         "unit": "per 1K tokens",
         "provider": "AI21 Labs",
         "region": "us-east-1"
+    },
+    "Claude 3 Opus*": {
+        "input_price": 0.015,
+        "output_price": 0.075,
+        "batch_input_price": 0.0075,
+        "batch_output_price": 0.0375,
+        "cache_write_price": null,
+        "cache_read_price": null,
+        "unit": "per 1K tokens",
+        "provider": "Anthropic",
+        "region": "us-east-1 / us-west-2"
+    },
+    "Claude 3 Haiku": {
+        "input_price": 0.00025,
+        "output_price": 0.00125,
+        "batch_input_price": 0.000125,
+        "batch_output_price": 0.000625,
+        "cache_write_price": null,
+        "cache_read_price": null,
+        "unit": "per 1K tokens",
+        "provider": "Anthropic",
+        "region": "us-east-1 / us-west-2"
+    },
+    "Claude 3 Sonnet": {
+        "input_price": 0.003,
+        "output_price": 0.015,
+        "batch_input_price": 0.0015,
+        "batch_output_price": 0.0075,
+        "cache_write_price": null,
+        "cache_read_price": null,
+        "unit": "per 1K tokens",
+        "provider": "Anthropic",
+        "region": "us-east-1 / us-west-2"
+    },
+    "Claude 2.1": {
+        "input_price": 0.008,
+        "output_price": 0.024,
+        "batch_input_price": null,
+        "batch_output_price": null,
+        "cache_write_price": null,
+        "cache_read_price": null,
+        "unit": "per 1K tokens",
+        "provider": "Anthropic",
+        "region": "us-east-1 / us-west-2"
+    },
+    "Claude 2.0": {
+        "input_price": 0.008,
+        "output_price": 0.024,
+        "batch_input_price": null,
+        "batch_output_price": null,
+        "cache_write_price": null,
+        "cache_read_price": null,
+        "unit": "per 1K tokens",
+        "provider": "Anthropic",
+        "region": "us-east-1 / us-west-2"
+    },
+    "Claude Instant": {
+        "input_price": 0.0008,
+        "output_price": 0.0024,
+        "batch_input_price": null,
+        "batch_output_price": null,
+        "cache_write_price": null,
+        "cache_read_price": null,
+        "unit": "per 1K tokens",
+        "provider": "Anthropic",
+        "region": "us-east-1 / us-west-2"
+    },
+    "Claude 3\u00a0Haiku": {
+        "input_price": 0.00025,
+        "output_price": 0.00125,
+        "batch_input_price": 0.000125,
+        "batch_output_price": 0.000625,
+        "cache_write_price": null,
+        "cache_read_price": null,
+        "unit": "per 1K tokens",
+        "provider": "Anthropic",
+        "region": "us-east-1 / us-west-2"
     },
     "DeepSeek-R1": {
         "input_price": 0.00135,
