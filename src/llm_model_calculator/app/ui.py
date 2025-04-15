@@ -3,6 +3,9 @@ from transformers import AutoTokenizer, AutoModelForCausalLM
 import torch
 import json
 from fuzzywuzzy import fuzz
+import re  # To help parse the number of tokens from the query
+import json
+
 
 # Load DistilGPT-2
 model_name_gpt = "distilgpt2"
@@ -29,6 +32,7 @@ def calculate_cost(model_name, input_tokens, output_tokens, num_requests, model_
             highest_score = score
             matched_model = candidate
 
+
     if matched_model:
         details = model_data[matched_model]
         input_cost = details["input_price"] * input_tokens / 1000
@@ -44,6 +48,28 @@ def calculate_cost(model_name, input_tokens, output_tokens, num_requests, model_
         }
 
     return None
+def calculate_cost(query):
+    # Match tokens and type
+    match = re.search(r"(\d+)\s*(input|output)\s*tokens", query, re.IGNORECASE)
+    if not match:
+        return "❓ Sorry, I couldn't extract token info from your query."
+
+    token_count = int(match.group(1))
+    token_type = match.group(2).lower()
+
+    # Check for model names in the query
+    for model_name in pricing_data:
+        if model_name.lower() in query.lower():
+            price_key = "input_price" if token_type == "input" else "output_price"
+            price = pricing_data[model_name].get(price_key)
+
+            if price is not None:
+                cost = (token_count / 1000) * price
+                return f"The cost for {token_count} {token_type} tokens for **{model_name}** is: **${cost:.4f}**"
+            else:
+                return f"⚠️ Pricing for {token_type} tokens for {model_name} is not available."
+
+    return "❓ Sorry, I couldn't find any model name in your query."
 
 # GPT fallback
 def generate_response(input_text):
@@ -58,6 +84,7 @@ def generate_response(input_text):
             temperature=0.75,
         )
     return tokenizer.decode(output[0], skip_special_tokens=True)
+
 
 # UI
 st.title("🤖 LLM Cost Estimation Chatbot")
@@ -87,6 +114,9 @@ if st.session_state.step < len(keys):
     question = questions[current_key]
 
     st.markdown(f"**Q{st.session_state.step + 1}: {question}**")
+
+    # Get bot reply
+    bot_reply = calculate_cost(user_query)
 
     user_input = None
 
